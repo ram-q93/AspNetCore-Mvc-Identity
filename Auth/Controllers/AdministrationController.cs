@@ -3,6 +3,8 @@ using Auth.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,12 +16,14 @@ namespace Auth.Controllers
     {
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<AppUser> userManager;
+        private readonly ILogger<AdministrationController> logger;
 
         public AdministrationController(RoleManager<IdentityRole> roleManager,
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager, ILogger<AdministrationController> logger)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
+            this.logger = logger;
         }
 
         #region ListUsers
@@ -323,6 +327,49 @@ namespace Auth.Controllers
 
         #endregion
 
+        #region DeleteRole
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string id)
+        {
+            var role = await roleManager.FindByIdAsync(id);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                // Wrap the code in a try/catch block
+                try
+                {
+                    //throw new Exception("Test Exception");
+                    var result = await roleManager.DeleteAsync(role);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("ListRoles");
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View("ListRoles");
+                }
+                // If the exception is DbUpdateException, we know we are not able to
+                // delete the role as there are users in the role being deleted
+                catch (DbUpdateException ex)
+                {
+                    logger.LogError($"Exception Occured : {ex}");
+                    ViewBag.ErrorTitle = $"{role.Name} role is in use";
+                    ViewBag.ErrorMessage = $"{role.Name} role cannot be deleted " +
+                        $"as there are users in this role. If you want to delete this role," +
+                        $" please remove the users from the role and then try to delete";
+                    return View("Error");
+                }
+            }
+        }
+
+        #endregion
     }
 }
