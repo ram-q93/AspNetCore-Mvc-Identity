@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Auth.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Auth.Models;
-using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace Auth.Controllers
 {
@@ -25,7 +21,17 @@ namespace Auth.Controllers
             return View();
         }
 
+        //those who are members of either Admin or User role.
+        [Authorize(Roles = "Admin,User")]
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        //have to be members of both - the Admin role and the User role.
+        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User")]
+        public IActionResult Welcome()
         {
             return View();
         }
