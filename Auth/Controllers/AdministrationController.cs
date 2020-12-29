@@ -1,5 +1,6 @@
 ﻿using Auth.DataAccess.Entities;
 using Auth.Models;
+using Auth.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
+using Utilities;
 
 namespace Auth.Controllers
 {
-    [Authorize(Policy = "AdminUserRolePolicy")]
+    [Authorize(Policy = "AdministrationPolicy")]
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
@@ -59,7 +60,7 @@ namespace Auth.Controllers
                 Email = user.Email,
                 UserName = user.UserName,
                 City = user.City,
-                Claims = userClaims.Select(c => c.Value).ToList(),
+                Claims = userClaims.Select(c => c.Type + ": " + c.Value).ToList(),
                 Roles = userRoles
             };
 
@@ -136,6 +137,7 @@ namespace Auth.Controllers
         #region ManageUserRoles
 
         [HttpGet]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> ManageUserRoles(string userId)
         {
             ViewBag.userId = userId;
@@ -175,6 +177,7 @@ namespace Auth.Controllers
 
 
         [HttpPost]
+        [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
         {
             var user = await userManager.FindByIdAsync(userId);
@@ -211,6 +214,7 @@ namespace Auth.Controllers
         #region ManageUserClaims
 
         [HttpGet]
+        [Authorize(Policy = "ManageUserClaimsPolicy")]
         public async Task<IActionResult> ManageUserClaims(string userId)
         {
             var user = await userManager.FindByIdAsync(userId);
@@ -239,7 +243,7 @@ namespace Auth.Controllers
 
                 // If the user has the claim, set IsSelected property to true, so the checkbox
                 // next to the claim is checked on the UI
-                if (existingUserClaims.Any(c => c.Type == claim.Type))
+                if (existingUserClaims.Any(c => c.Type == claim.Type && c.Value == Constants.True))
                 {
                     userClaim.IsSelected = true;
                 }
@@ -252,6 +256,7 @@ namespace Auth.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "ManageUserClaimsPolicy")]
         public async Task<IActionResult> ManageUserClaims(UserClaimsViewModel model)
         {
             var user = await userManager.FindByIdAsync(model.UserId);
@@ -274,7 +279,7 @@ namespace Auth.Controllers
 
             // Add all the claims that are selected on the UI
             result = await userManager.AddClaimsAsync(user,
-                model.Cliams.Where(c => c.IsSelected).Select(c => new Claim(c.ClaimType, c.ClaimType)));
+                model.Cliams.Select(c => new Claim(c.ClaimType, c.IsSelected ? Constants.True : Constants.False)));
 
             if (!result.Succeeded)
             {
