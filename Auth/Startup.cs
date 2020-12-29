@@ -28,7 +28,7 @@ namespace Auth
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation(); ;
 
-            services.AddDbContext<AppIdentityDbContext>(options =>
+            services.AddDbContextPool<AppIdentityDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("Default")));
 
 
@@ -41,7 +41,10 @@ namespace Auth
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 3;
-            }).AddEntityFrameworkStores<AppIdentityDbContext>();
+
+                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+            }).AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<AppIdentityDbContext>();
 
 
             //Apply Authorize attribute globally
