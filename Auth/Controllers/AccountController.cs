@@ -1,9 +1,12 @@
 ﻿using Auth.DataAccess.Entities;
 using Auth.Models;
+using Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Auth.Controllers
@@ -13,20 +16,23 @@ namespace Auth.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
         private readonly ILogger<AccountController> logger;
+        private readonly IEmailService _emailService;
 
         public AccountController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager, ILogger<AccountController> logger)
+            SignInManager<AppUser> signInManager,
+            ILogger<AccountController> logger,
+            IEmailService emailService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
+            _emailService = emailService;
         }
 
 
         #region Register
 
-        [HttpGet]
-        [AllowAnonymous]
+        [AllowAnonymous, HttpGet]
         public IActionResult Register() => View();
 
 
@@ -51,6 +57,11 @@ namespace Auth.Controllers
                 // SignInManager and redirect to index action of HomeController
                 if (result.Succeeded)
                 {
+                    var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                        new { userId = user.Id, token = token }, Request.Scheme);
+                    logger.Log(LogLevel.Warning, confirmationLink);
+
                     // If the user is signed in and in the Admin role, then it is
                     // the Admin user that is creating a new user. So redirect the
                     // Admin user to ListRoles action
@@ -59,8 +70,7 @@ namespace Auth.Controllers
                         return RedirectToAction("ListUsers", "Administration");
                     }
 
-                    await signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("index", "home");
+                    return View("RegistrationSuccessful");
                 }
 
                 // If there are any errors, add them to the ModelState object
@@ -80,15 +90,36 @@ namespace Auth.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login() => View();
+        public async Task<IActionResult> Login(string returnUrl)
+        {
+            LoginViewModel model = new LoginViewModel
+            {
+                ReturnUrl = returnUrl,
+                ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+            };
+
+            return View(model);
+        }
 
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            //avoid nullrefrence in Login.cshtml
+            model.ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
+                var user = await userManager.FindByEmailAsync(model.Email);
+                if (user != null && !user.EmailConfirmed && (await userManager.CheckPasswordAsync(user, model.Password)))
+                {
+                    //why do we need to check if the user has provided correct username 
+                    //and password.Well, this is to avoid account enumeration and brute force attacks. 
+                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+                    return View(model);
+                }
+
                 // isPersistent = model.RememberMe for session cookie or persistent cookie
                 var result = await signInManager.PasswordSignInAsync(
                     model.Email, model.Password, model.RememberMe, false);
@@ -110,6 +141,137 @@ namespace Auth.Controllers
             }
 
             return View(model);
+        }
+
+        #endregion
+
+        #region ExternalLogin
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            // https://console.developers.google.com
+            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
+            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return new ChallengeResult(provider, properties);
+        }
+
+        #endregion
+
+        #region ExternalLoginCallback
+        [AllowAnonymous]
+        public async Task<IActionResult>
+        ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        {
+            returnUrl = returnUrl ?? Url.Content("~/");
+
+            LoginViewModel loginViewModel = new LoginViewModel
+            {
+                ReturnUrl = returnUrl,
+                ExternalLogins =
+                (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+            };
+
+            if (remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty,
+                    $"Error from external provider: {remoteError}");
+
+                return View("Login", loginViewModel);
+            }
+
+            var info = await signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "Error loading external login information.");
+
+                return View("Login", loginViewModel);
+            }
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            AppUser user = null;
+            if (email != null)
+            {
+                user = await userManager.FindByEmailAsync(email);
+                if (user != null && !user.EmailConfirmed)
+                {
+                    ModelState.AddModelError(string.Empty, "Email not confirmed yet");
+                    return View("Login", loginViewModel);
+                }
+            }
+
+            var signInResult = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey,
+                                        isPersistent: false, bypassTwoFactor: true);
+            if (signInResult.Succeeded)
+            {
+                return LocalRedirect(returnUrl);
+            }
+            else
+            {
+                if (email != null)
+                {
+                    if (user == null)
+                    {
+                        user = new AppUser
+                        {
+                            UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
+                            Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        };
+
+                        await userManager.CreateAsync(user);
+
+                        // After a local user account is created, generate and log the
+                        // email confirmation link
+                        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                                        new { userId = user.Id, token = token }, Request.Scheme);
+
+                        logger.Log(LogLevel.Warning, confirmationLink);
+                        return View("RegistrationSuccessful");
+                    }
+
+                    await userManager.AddLoginAsync(user, info);
+                    await signInManager.SignInAsync(user, isPersistent: false);
+
+                    return LocalRedirect(returnUrl);
+                }
+
+                ViewBag.ErrorTitle = $"Email claim not received from: {info.LoginProvider}";
+                ViewBag.ErrorMessage = "Please contact support on Pragim@PragimTech.com";
+
+                return View("Error");
+            }
+        }
+
+        #endregion
+
+        #region ConfirmEmail
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return RedirectToAction("index", "home");
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"The User ID {userId} is invalid";
+                return View("NotFound");
+            }
+
+            var result = await userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return View();
+            }
+
+            ViewBag.ErrorTitle = "Email cannot be confirmed";
+            return View("Error");
         }
 
         #endregion
@@ -183,6 +345,7 @@ namespace Auth.Controllers
 
                     // Log the password reset link
                     logger.Log(LogLevel.Warning, passwordResetLink);
+                    await _emailService.SendEmailForForgotPassword(user, passwordResetLink);
 
                     // Send the user to Forgot Password Confirmation view
                     return View("ForgotPasswordConfirmation");

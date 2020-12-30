@@ -1,6 +1,8 @@
 using Auth.DataAccess;
 using Auth.DataAccess.Entities;
+using Auth.Models;
 using Auth.Security;
+using Auth.Services;
 using Auth.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -41,10 +43,11 @@ namespace Auth
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 3;
-
-                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
+                //Email confirmation
+                options.SignIn.RequireConfirmedEmail = true;
             }).AddDefaultTokenProviders()
-                .AddEntityFrameworkStores<AppIdentityDbContext>();
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddDefaultTokenProviders(); //Add ASP.NET core default token providers
 
 
             //Apply Authorize attribute globally
@@ -53,6 +56,13 @@ namespace Auth
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            services.AddAuthentication().AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = Configuration["GoogleApi:ClientId"];
+                googleOptions.ClientSecret = Configuration["GoogleApi:ClientSecret"];
+            });
+
 
             //---------------part-95-----------------
             //Role based authorization(RBAC) vs claims based authorization(CBAC)
@@ -148,6 +158,10 @@ namespace Auth
             {
                 options.AccessDeniedPath = new PathString("/Administration/AccessDenied");
             });
+
+
+            services.AddScoped<IEmailService, EmailService>();
+            services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
 
         }
 
