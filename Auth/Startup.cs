@@ -45,8 +45,7 @@ namespace Auth
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 3;
                 options.Password.RequiredUniqueChars = 3;
-                //Email confirmation
-                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;       //Email confirmation
                 options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
             }).AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppIdentityDbContext>()
