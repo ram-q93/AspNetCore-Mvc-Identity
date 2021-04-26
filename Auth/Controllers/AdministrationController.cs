@@ -152,7 +152,7 @@ namespace Auth.Controllers
 
             var model = new List<UserRolesViewModel>();
 
-            foreach (var role in roleManager.Roles)
+            foreach (var role in roleManager.Roles.ToList())
             {
                 var userRolesViewModel = new UserRolesViewModel
                 {
@@ -361,7 +361,7 @@ namespace Auth.Controllers
             };
 
             // Retrieve all the Users
-            foreach (var user in userManager.Users)
+            foreach (var user in userManager.Users.ToList())
             {
                 // If the user is in this role, add the username to
                 // Users property of EditRoleViewModel. This model
