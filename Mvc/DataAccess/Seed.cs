@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Auth.DataAccess.Entities;
 using Auth.Utilities;
@@ -47,6 +48,7 @@ namespace Auth.DataAccess
 
                 };
                 await AddUserWithRole(_userManager, superAdminUser, Constants.SuperAdmin);
+                await AddUserClaims(_userManager, superAdminUser, Constants.SuperAdmin);
 
 
                 var adminUser = new AppUser
@@ -83,6 +85,25 @@ namespace Auth.DataAccess
             var userRoles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, userRoles);
             await _userManager.AddToRoleAsync(user, roleConstant);
+        }
+
+        private static async Task AddUserClaims(UserManager<AppUser> _userManager,
+            AppUser user, string roleConstant)
+        {
+            // Get all the user existing claims and delete them
+            var claims = await _userManager.GetClaimsAsync(user);
+            var result = await _userManager.RemoveClaimsAsync(user, claims);
+
+            var superAdminClaims = new List<Claim>{
+                new Claim(Constants.CreateRole, Constants.True),
+                new Claim(Constants.EditRole, Constants.True),
+                new Claim(Constants.DeleteRole, Constants.True),
+                new Claim(Constants.ManageUserClaims, Constants.True),
+                new Claim(Constants.Create, Constants.True),
+                new Claim(Constants.Edit, Constants.True),
+                new Claim(Constants.Delete, Constants.True)
+            };
+            await _userManager.AddClaimsAsync(user, superAdminClaims);
         }
     }
 

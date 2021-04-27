@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Auth\Auth.csproj", "{2C362D61-49CF-4A20-B79A-141F5F635B6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCV", "Mvc\Mvc.csproj", "{2C362D61-49CF-4A20-B79A-141F5F635B6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

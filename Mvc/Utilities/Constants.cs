@@ -13,6 +13,9 @@
         public const string EditRole = "Edit Role";
         public const string DeleteRole = "Delete Role";
         public const string ManageUserClaims = "Manage User Claims";
+        public const string Create = "Create";
+        public const string Edit = "Edit";
+        public const string Delete = "Delete";
         //----------------------Claims---------------------//
 
         public const string True = "True";

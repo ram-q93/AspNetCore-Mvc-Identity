@@ -1,7 +1,7 @@
-﻿using Auth.Utilities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
-namespace Utilities
+
+namespace Auth.Utilities
 {
     public class ClaimsStore
     {

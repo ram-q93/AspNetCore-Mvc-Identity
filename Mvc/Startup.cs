@@ -179,6 +179,9 @@ namespace Auth
                 options.AccessDeniedPath = new PathString("/Administration/AccessDenied");
             });
 
+            //Add more policy
+            AddMorePolicies(services);
+
 
             services.AddScoped<IEmailService, EmailService>();
             services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
@@ -212,6 +215,14 @@ namespace Auth
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private void AddMorePolicies(IServiceCollection services)
+        {
+            services.AddAuthorization(options => options.AddPolicy("P_AdministrationPolicy", policy =>
+                  policy.AddRequirements(new SuperAdminRoleRequirement())));
+            services.AddSingleton<IAuthorizationHandler, SuperAdminRoleHandler>();
+
         }
     }
 }

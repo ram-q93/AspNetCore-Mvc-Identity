@@ -1,0 +1,33 @@
+﻿@inject SignInManager<AppUser> _signInManager;
+@inject IAuthorizationService _AuthorizationService;
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+@if (User.Identity.IsAuthenticated)
+{
+
+    <div >
+        <h3>Claims and Roles</h3>
+        @foreach (var item in @User.Claims)
+        {
+            <p style="margin-bottom:0;">@item.Type = @item.Value</p>
+        }
+    </div>
+<hr/>
+    <div>
+        @if ((await _AuthorizationService.AuthorizeAsync(User, null, "P_AdministrationPolicy")).Succeeded)
+        {
+            <p style="color:green">You are authorized to do everything </p>
+        }
+        else
+        {
+            <p style="color:red">You are Not authorized to do everything</p>
+        }
+
+    </div>
+
+}
