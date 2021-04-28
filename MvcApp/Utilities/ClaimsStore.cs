@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace Auth.Utilities
+namespace MvcApp.Utilities
 {
     public class ClaimsStore
     {

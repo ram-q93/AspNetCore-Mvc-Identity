@@ -1,11 +1,11 @@
-﻿using Auth.Utilities;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
+using MvcApp.Utilities;
 
-namespace Auth.Security
+namespace MvcApp.Security
 {
     public class CanEditOnlyOtherAdminRolesAndClaimsHandler :
     AuthorizationHandler<ManageAdminRolesAndClaimsRequirement>

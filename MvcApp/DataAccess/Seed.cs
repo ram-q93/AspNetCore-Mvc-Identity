@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Auth.DataAccess.Entities;
-using Auth.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Internal;
+using MvcApp.DataAccess.Entities;
+using MvcApp.Utilities;
 
-namespace Auth.DataAccess
+namespace MvcApp.DataAccess
 {
     public class Seed
     {
@@ -16,7 +16,7 @@ namespace Auth.DataAccess
             RoleManager<IdentityRole> _roleManager)
         {
 
-            List<AppUser> users = null;
+
             List<IdentityRole> roles = null;
 
 

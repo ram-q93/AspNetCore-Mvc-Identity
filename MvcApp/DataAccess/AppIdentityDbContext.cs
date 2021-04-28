@@ -1,9 +1,9 @@
-﻿using Auth.DataAccess.Entities;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using MvcApp.DataAccess.Entities;
 
-namespace Auth.DataAccess
+namespace MvcApp.DataAccess
 {
     public class AppIdentityDbContext : IdentityDbContext<AppUser>
     {

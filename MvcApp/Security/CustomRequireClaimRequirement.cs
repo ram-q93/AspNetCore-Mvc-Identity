@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using Auth.Utilities;
 using Microsoft.AspNetCore.Authorization;
+using MvcApp.Utilities;
 
-namespace Auth.Security
+namespace MvcApp.Security
 {
     public class SuperAdminRoleRequirement : IAuthorizationRequirement
     {

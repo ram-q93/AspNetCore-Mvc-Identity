@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Auth.DataAccess.Entities
+namespace MvcApp.DataAccess.Entities
 {
     public class AppUser : IdentityUser
     {

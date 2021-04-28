@@ -1,15 +1,15 @@
-﻿using Auth.DataAccess.Entities;
-using Auth.Models;
-using Auth.Services;
+﻿using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using MvcApp.DataAccess.Entities;
+using MvcApp.Models;
+using MvcApp.Services;
 
-namespace Auth.Controllers
+namespace MvcApp.Controllers
 {
     public class AccountController : Controller
     {

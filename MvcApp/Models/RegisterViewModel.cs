@@ -1,8 +1,8 @@
-﻿using Auth.Utilities;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+using MvcApp.Utilities;
 
-namespace Auth.Models
+namespace MvcApp.Models
 {
     public class RegisterViewModel
     {

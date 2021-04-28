@@ -1,8 +1,8 @@
-﻿using Auth.DataAccess.Entities;
-using Auth.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using MvcApp.DataAccess.Entities;
+using MvcApp.Models;
 
-namespace Auth.Services
+namespace MvcApp.Services
 {
     public interface IEmailService
     {

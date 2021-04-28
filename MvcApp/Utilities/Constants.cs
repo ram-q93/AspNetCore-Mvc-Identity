@@ -1,4 +1,4 @@
-﻿namespace Auth.Utilities
+﻿namespace MvcApp.Utilities
 {
     public static class Constants
     {

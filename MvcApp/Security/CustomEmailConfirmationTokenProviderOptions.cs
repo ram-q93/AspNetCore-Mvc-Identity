@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Auth.Security
+namespace MvcApp.Security
 {
     public class CustomEmailConfirmationTokenProviderOptions : DataProtectionTokenProviderOptions
     { }

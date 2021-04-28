@@ -1,8 +1,8 @@
-﻿using Auth.Utilities;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using System.Threading.Tasks;
+using MvcApp.Utilities;
 
-namespace Auth.Security
+namespace MvcApp.Security
 {
     public class SuperAdminHandler :
     AuthorizationHandler<ManageAdminRolesAndClaimsRequirement>

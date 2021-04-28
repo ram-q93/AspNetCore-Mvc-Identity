@@ -1,4 +1,4 @@
-﻿namespace Auth.Models
+﻿namespace MvcApp.Models
 {
     public class SMTPConfigModel
     {

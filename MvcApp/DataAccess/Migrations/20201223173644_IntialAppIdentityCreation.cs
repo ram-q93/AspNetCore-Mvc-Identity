@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Auth.DataAccess.Migrations
+namespace MvcApp.DataAccess.Migrations
 {
     public partial class IntialAppIdentityCreation : Migration
     {

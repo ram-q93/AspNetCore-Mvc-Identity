@@ -1,14 +1,14 @@
-﻿using Auth.DataAccess.Entities;
-using Auth.Models;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using MvcApp.DataAccess.Entities;
+using MvcApp.Models;
 
-namespace Auth.Services
+namespace MvcApp.Services
 {
     public class EmailService : IEmailService
     {

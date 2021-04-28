@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Auth.Models
+namespace MvcApp.Models
 {
     public class ForgotPasswordViewModel
     {

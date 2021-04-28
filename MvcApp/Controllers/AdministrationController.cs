@@ -1,17 +1,17 @@
-﻿using Auth.DataAccess.Entities;
-using Auth.Models;
-using Auth.Utilities;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using MvcApp.DataAccess.Entities;
+using MvcApp.Models;
+using MvcApp.Utilities;
 
-namespace Auth.Controllers
+namespace MvcApp.Controllers
 {
     [Authorize(Policy = "AdministrationPolicy")]
     public class AdministrationController : Controller
@@ -48,7 +48,7 @@ namespace Auth.Controllers
                 return View("NotFound");
             }
 
-            // GetClaimsAsync retunrs the list of user Claims
+            // GetClaimsAsync returns the list of user Claims
             var userClaims = await userManager.GetClaimsAsync(user);
             // GetRolesAsync returns the list of user Roles
             var userRoles = await userManager.GetRolesAsync(user);

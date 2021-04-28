@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Auth.DataAccess.Migrations
+namespace MvcApp.DataAccess.Migrations
 {
     public partial class Foreign_key_with_NO_ACTION_ON_DELETE : Migration
     {

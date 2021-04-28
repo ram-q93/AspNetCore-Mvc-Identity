@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Auth.Models
+namespace MvcApp.Models
 {
     public class UserEmailOptionsModel
     {

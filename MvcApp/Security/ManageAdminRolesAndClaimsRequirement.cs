@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Auth.Security
+namespace MvcApp.Security
 {
     public class ManageAdminRolesAndClaimsRequirement : IAuthorizationRequirement
     { }

@@ -1,9 +1,4 @@
-using Auth.DataAccess;
-using Auth.DataAccess.Entities;
-using Auth.Models;
-using Auth.Security;
-using Auth.Services;
-using Auth.Utilities;
+using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,9 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
+using MvcApp.DataAccess;
+using MvcApp.DataAccess.Entities;
+using MvcApp.Models;
+using MvcApp.Security;
+using MvcApp.Services;
+using MvcApp.Utilities;
 
-namespace Auth
+namespace MvcApp
 {
     public class Startup
     {

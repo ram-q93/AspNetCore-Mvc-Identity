@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Auth.Controllers
+namespace MvcApp.Controllers
 {
     public class HomeController : Controller
     {
