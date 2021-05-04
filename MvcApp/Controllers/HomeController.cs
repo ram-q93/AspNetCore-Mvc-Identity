@@ -13,7 +13,7 @@ namespace MvcApp.Controllers
             _logger = logger;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public IActionResult Index()
         {
             return View();
