@@ -38,6 +38,15 @@ namespace JwtApp.Services
                 new Claim(ClaimTypes.Email, user.Email)
             };
 
+            var userRoles = await _userManager.GetRolesAsync(user);
+            if (userRoles != null && userRoles.Count > 0)
+            {
+                foreach (var r in userRoles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, r));
+                }
+            }
+
             var userClaims = await _userManager.GetClaimsAsync(user);
             if (userClaims != null && userClaims.Count > 0)
             {

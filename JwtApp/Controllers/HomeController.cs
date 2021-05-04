@@ -17,6 +17,20 @@ namespace JwtApp.Controllers
         }
 
 
+        [Authorize(Roles = "Super Admin")]
+        [HttpGet("secret")]
+        public Result<string> Secret()
+        {
+            return Result<string>.Success("Secret");
+        }
+
+        [Authorize(Policy = "EditPolicy")]
+        [HttpGet("edit")]
+        public Result<string> Edit()
+        {
+            return Result<string>.Success("edit");
+        }
+
 
     }
 }

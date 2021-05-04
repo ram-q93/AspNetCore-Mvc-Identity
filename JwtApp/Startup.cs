@@ -65,6 +65,10 @@ namespace JwtApp
                    }
                );
 
+            services.AddAuthorization(options => options.AddPolicy("EditPolicy", policy =>
+                     policy.RequireClaim("Edit", "True")
+            ));
+
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAccountService, AccountService>();
         }
