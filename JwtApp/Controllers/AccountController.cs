@@ -24,7 +24,13 @@ namespace JwtApp.Controllers
             return await _accountService.Login(loginDto);
         }
 
+        [Authorize]
+        [HttpPost("refreshToken")]
+        public async Task<Result<UserDto>> RefreshToken()
+        {
+            return await _accountService.RefreshToken();
+        }
 
-        
+
     }
 }
