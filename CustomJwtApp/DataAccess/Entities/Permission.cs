@@ -6,11 +6,11 @@ namespace CustomJwtApp.DataAccess.Entities
     {
         public Permission()
         {
-            RolePermissions = new HashSet<RolePermission>();
+            Roles = new HashSet<Role>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<RolePermission> RolePermissions { get; set; }
+        public ICollection<Role> Roles { get; set; }
     }
 }

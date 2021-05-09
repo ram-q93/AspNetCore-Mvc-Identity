@@ -26,17 +26,17 @@ namespace Persistence
                         Role = new Role
                         {
                             Name = Roles.Admin.ToString(),
-                            RolePermissions = new List<RolePermission>
-                            {
-                                new RolePermission
-                                {
-                                    Permission =new Permission
-                                    {
-                                        Id = (int)Permissions.Create,
-                                        Name = Permissions.Create.ToString()
-                                    }
-                                }
-                            }
+                            // RolePermissions = new List<RolePermission>
+                            // {
+                            //     new RolePermission
+                            //     {
+                            //         Permission =new Permission
+                            //         {
+                            //             Id = (int)Permissions.Create,
+                            //             Name = Permissions.Create.ToString()
+                            //         }
+                            //     }
+                            // }
                             
                         }
 

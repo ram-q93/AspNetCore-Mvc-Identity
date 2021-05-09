@@ -7,18 +7,14 @@ namespace CustomJwtApp.DataAccess.Entities
     {
         public Role()
         {
-            RolePermissions = new HashSet<RolePermission>();
+            Permissions = new HashSet<Permission>();
             Users = new HashSet<User>();
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
         public ICollection<User> Users { get; set; }
-        public ICollection<RolePermission> RolePermissions { get; set; }
+        public ICollection<Permission> Permissions { get; set; }
 
-        public static implicit operator Role(Role v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

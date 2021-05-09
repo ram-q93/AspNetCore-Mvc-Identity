@@ -43,7 +43,7 @@ namespace CustomJwtApp
 
             var resultServices = TypeRegister.ScanAssemblyTypes(Assembly.GetExecutingAssembly())
                 .ToList();
-
+           // resultServices.Add()
             resultServices.RegisterServicesByLifeTime(services);
 
         }

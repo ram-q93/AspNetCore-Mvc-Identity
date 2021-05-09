@@ -48,30 +48,6 @@ namespace CustomJwtApp.DataAccess.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("CustomJwtApp.DataAccess.Entities.RolePermission", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PermissionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("PermissionId1")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PermissionId1");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RolePermissions");
-                });
-
             modelBuilder.Entity("CustomJwtApp.DataAccess.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -103,21 +79,19 @@ namespace CustomJwtApp.DataAccess.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CustomJwtApp.DataAccess.Entities.RolePermission", b =>
+            modelBuilder.Entity("PermissionRole", b =>
                 {
-                    b.HasOne("CustomJwtApp.DataAccess.Entities.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId1");
+                    b.Property<int>("PermissionsId")
+                        .HasColumnType("int");
 
-                    b.HasOne("CustomJwtApp.DataAccess.Entities.Role", "Role")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("RolesId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Navigation("Permission");
+                    b.HasKey("PermissionsId", "RolesId");
 
-                    b.Navigation("Role");
+                    b.HasIndex("RolesId");
+
+                    b.ToTable("PermissionRole");
                 });
 
             modelBuilder.Entity("CustomJwtApp.DataAccess.Entities.User", b =>
@@ -129,15 +103,23 @@ namespace CustomJwtApp.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CustomJwtApp.DataAccess.Entities.Permission", b =>
+            modelBuilder.Entity("PermissionRole", b =>
                 {
-                    b.Navigation("RolePermissions");
+                    b.HasOne("CustomJwtApp.DataAccess.Entities.Permission", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CustomJwtApp.DataAccess.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CustomJwtApp.DataAccess.Entities.Role", b =>
                 {
-                    b.Navigation("RolePermissions");
-
                     b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
