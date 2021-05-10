@@ -1,18 +1,17 @@
 ﻿using AspNetCore.Lib.Services.Interfaces;
 using CustomJwtApp.Core;
-using CustomJwtApp.DataAccess;
 using CustomJwtApp.DataAccess.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Persistence
+namespace CustomJwtApp.DataAccess
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext context, ICryptoService cryptoService)
+        public static async Task SeedData(DataContext _context, ICryptoService _cryptoService)
         {
-            if (!context.Users.Any())
+            if (!_context.Users.Any())
             {
                 var users = new List<User>
                 {
@@ -22,22 +21,11 @@ namespace Persistence
                         LastName="Anderson",
                         Enabled=true,
                         Username ="bob",
-                        Password=cryptoService.ComputeSha512Hash("test"),
+                        Password=_cryptoService.ComputeSha512Hash("test"),
                         Role = new Role
                         {
                             Name = Roles.Admin.ToString(),
-                            // RolePermissions = new List<RolePermission>
-                            // {
-                            //     new RolePermission
-                            //     {
-                            //         Permission =new Permission
-                            //         {
-                            //             Id = (int)Permissions.Create,
-                            //             Name = Permissions.Create.ToString()
-                            //         }
-                            //     }
-                            // }
-                            
+                            //Permissions = AdminPermissions()
                         }
 
                     }
@@ -60,13 +48,18 @@ namespace Persistence
                     //},
                 };
 
-                foreach (var user in users)
-                {
-                    // await userManager.CreateAsync(user, "Pa$$w0rd");
-                }
+                _context.AddRange(users);
 
-                await context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
         }
+        private static List<Permission> AdminPermissions()
+        {
+            return new List<Permission>
+            {
+                new Permission{Id = (int)Permissions.Create, Name = Permissions.Create.ToString()}
+            };
+        }
     }
+
 }

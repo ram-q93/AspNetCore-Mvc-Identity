@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using AspNetCore.Lib.Services.Interfaces;
 using CustomJwtApp.DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +22,12 @@ namespace CustomJwtApp
 
             try
             {
-                var context = services.GetRequiredService<DataContext>();
-                await context.Database.MigrateAsync();
-                //await Seed.SeedData(context, userManager);
+                var _context = services.GetRequiredService<DataContext>();
+                var _cryptoService = services.GetRequiredService<ICryptoService>();
+
+                await _context.Database.MigrateAsync();
+                
+                await Seed.SeedData(_context, _cryptoService);
             }
             catch (Exception ex)
             {

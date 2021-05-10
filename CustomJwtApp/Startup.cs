@@ -41,9 +41,8 @@ namespace CustomJwtApp
                 options.UseSqlServer(Configuration.GetConnectionString("SqlServerConnection"));
             });
 
-            var resultServices = TypeRegister.ScanAssemblyTypes(Assembly.GetExecutingAssembly())
-                .ToList();
-           // resultServices.Add()
+            var resultServices = TypeRegister.ScanAssemblyTypes(Assembly.GetExecutingAssembly()).ToList();
+
             resultServices.RegisterServicesByLifeTime(services);
 
         }
